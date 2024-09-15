@@ -20,7 +20,11 @@ def checkout_to_main_or_master
   branch = branches.find { |b| system("git show-ref --quiet refs/heads/#{b}") }
 
   if branch
+    puts "checking out to #{branch}..."
     run_command("git checkout #{branch}")
+    puts "updating #{branch} ..."
+    run_command("git pull origin #{branch}")
+    puts "updated #{branch}...."
   else
     puts "Error: Neither 'master' nor 'main' branch exists. Exiting..."
     exit(1)
