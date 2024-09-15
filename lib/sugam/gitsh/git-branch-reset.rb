@@ -70,8 +70,8 @@ unless options[:branch]
 end
 
 # Perform the operations
-checkout_to_main_or_master
 stash_local_changes
+checkout_to_main_or_master
 reset_branch(options[:branch])
 
 puts "#{options[:branch]} branch reset successfully."
