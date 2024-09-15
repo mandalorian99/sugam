@@ -13,7 +13,7 @@ def checkout_branch(branch)
     puts "Checked out to #{branch} successfully."
   else
     puts "Failed to checkout to #{branch}. Exiting..."
-    exit 1
+    nil
   end
 end
 
@@ -23,7 +23,7 @@ def update_branch(branch)
     puts "#{branch} is up to date."
   else
     puts "Failed to update #{branch}. Exiting..."
-    exit 1
+    nil
   end
 end
 
