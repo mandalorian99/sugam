@@ -1,0 +1,121 @@
+## House keeper utility to organize downloads folder
+#  based on files extentions it organize files in
+#  there respective folders
+
+require 'fileutils'
+
+# Paths
+DOWNLOADS_DIR = File.expand_path('~/Downloads')
+IMAGES_DIR = File.join(DOWNLOADS_DIR, 'Images')
+PDFS_DIR = File.join(DOWNLOADS_DIR, 'PDFs')
+EXCEL_DIR = File.join(DOWNLOADS_DIR, 'Excel_Sheets')
+CSV_DIR = File.join(DOWNLOADS_DIR, 'CSVs')
+EPUBS_DIR = File.join(DOWNLOADS_DIR, 'EPUBs')
+ZIPS_DIR = File.join(DOWNLOADS_DIR, 'Zips')
+DMG_DIR = File.join(DOWNLOADS_DIR, 'DMG_Packages')
+SCREEN_RECORDINGS_DIR = File.join(DOWNLOADS_DIR, 'ScreenRecordings')
+TEXT_DIR = File.join(DOWNLOADS_DIR, 'Text')
+OTHER_DIR = File.join(DOWNLOADS_DIR, 'Other')
+
+# File extensions for categorization
+IMAGE_EXTENSIONS = %w[.png .jpeg .jpg .gif .bmp .tiff .svg .webp]
+PDF_EPUB_EXTENSIONS = %w[.pdf .epub]
+EXCEL_EXTENSIONS = %w[.xlsx .xls]
+CSV_EXTENSION = '.csv'
+ZIP_EXTENSION = '.zip'
+DMG_EXTENSION = '.dmg'
+SCREEN_RECORDING_EXTENSION = '.mov'
+TEXT_EXTENSIONS = %w[.docx .doc .txt .sh]
+
+# Create folders safely (if they don't exist)
+def create_folders
+  [IMAGES_DIR, PDFS_DIR, EXCEL_DIR, CSV_DIR, EPUBS_DIR, ZIPS_DIR, DMG_DIR, SCREEN_RECORDINGS_DIR, TEXT_DIR, OTHER_DIR].each do |folder|
+    FileUtils.mkdir_p(folder) unless Dir.exist?(folder)
+  end
+end
+
+# Check file types
+def image_file?(file)
+  IMAGE_EXTENSIONS.include?(File.extname(file).downcase)
+end
+
+def pdf_or_epub_file?(file)
+  PDF_EPUB_EXTENSIONS.include?(File.extname(file).downcase)
+end
+
+def excel_file?(file)
+  EXCEL_EXTENSIONS.include?(File.extname(file).downcase)
+end
+
+def csv_file?(file)
+  File.extname(file).downcase == CSV_EXTENSION
+end
+
+def zip_file?(file)
+  File.extname(file).downcase == ZIP_EXTENSION
+end
+
+def dmg_file?(file)
+  File.extname(file).downcase == DMG_EXTENSION
+end
+
+def screen_recording_file?(file)
+  File.extname(file).downcase == SCREEN_RECORDING_EXTENSION
+end
+
+def text_file?(file)
+  TEXT_EXTENSIONS.include?(File.extname(file).downcase)
+end
+
+# Organize files based on their extensions
+def organize_files
+  Dir.foreach(DOWNLOADS_DIR) do |item|
+    next if item.start_with?('.') # Skip hidden files
+
+    path = File.join(DOWNLOADS_DIR, item)
+
+    # Skip existing folders
+    next if File.directory?(path)
+
+    if image_file?(item)
+      puts "Moving image file: #{item}"
+      FileUtils.mv(path, IMAGES_DIR)
+    elsif pdf_or_epub_file?(item)
+      puts "Moving PDF/EPUB file: #{item}"
+      FileUtils.mv(path, PDFS_DIR)
+    elsif excel_file?(item)
+      puts "Moving Excel file: #{item}"
+      FileUtils.mv(path, EXCEL_DIR)
+    elsif csv_file?(item)
+      puts "Moving CSV file: #{item}"
+      FileUtils.mv(path, CSV_DIR)
+    elsif zip_file?(item)
+      puts "Moving ZIP file: #{item}"
+      FileUtils.mv(path, ZIPS_DIR)
+    elsif dmg_file?(item)
+      puts "Moving DMG package: #{item}"
+      FileUtils.mv(path, DMG_DIR)
+    elsif screen_recording_file?(item)
+      puts "Moving Screen Recording file: #{item}"
+      FileUtils.mv(path, SCREEN_RECORDINGS_DIR)
+    elsif text_file?(item)
+      puts "Moving Text file: #{item}"
+      FileUtils.mv(path, TEXT_DIR)
+    else
+      puts "Moving Other file: #{item}"
+      FileUtils.mv(path, OTHER_DIR)
+    end
+  rescue StandardError => e
+    puts "Error moving #{item}: #{e.message}"
+  end
+end
+
+# Main execution
+begin
+  puts "Organizing your Downloads folder..."
+  create_folders
+  organize_files
+  puts "Organization complete!"
+rescue StandardError => e
+  puts "An error occurred: #{e.message}"
+end
